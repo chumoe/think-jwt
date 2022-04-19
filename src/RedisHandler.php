@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Chumoe\Jwt;
 
-use support\Redis;
+use think\facade\Cache;
 use Chumoe\Jwt\Exception\JwtCacheTokenException;
 
-class RedisHandler
+class CacheHandler
 {
     /**
      * @desc: 生成设备缓存令牌
@@ -18,12 +18,12 @@ class RedisHandler
      */
     public static function generateToken(array $args): void
     {
-        $cacheKey = $args['cache_token_pre'].$args['id'];
-        $key = Redis::keys($cacheKey.':*');
+        $cacheKey = $args['cache_token_pre'].$args['uid'].':'.$args['ip'];
+        $key = Cache::get($cacheKey);
         if (!empty($key)) {
-            Redis::del(current($key));
+            Cache::delete($cacheKey);
         }
-        Redis::setex($cacheKey.':'.$args['ip'], $args['cache_token_ttl'], $args['extend']);
+        Cache::set($cacheKey, $args['extend'], $args['cache_token_ttl']);
     }
 
     /**
@@ -37,7 +37,7 @@ class RedisHandler
     public static function verifyToken(string $pre, string $uid, string $ip): bool
     {
         $cacheKey = $pre.$uid.':'.$ip;
-        if (!Redis::exists($cacheKey)) {
+        if (!empty(Cache::get($cacheKey))) {
             throw new JwtCacheTokenException('该账号已在其他设备登录，强制下线');
         }
         return true;
