@@ -337,7 +337,7 @@ class JwtToken
      */
     private static function _getConfig(): array
     {
-        $config = config('jwt');
+        $config = config('jwt.jwt');
         if (empty($config)) {
             throw new JwtConfigException('jwt配置文件不存在');
         }
