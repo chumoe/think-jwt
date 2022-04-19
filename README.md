@@ -1,10 +1,10 @@
 # JSON Web Token (JWT) for webman plugin
 
-[![Latest Stable Version](http://poser.pugx.org/tinywan/jwt/v)](https://packagist.org/packages/tinywan/jwt) 
-[![Total Downloads](http://poser.pugx.org/tinywan/jwt/downloads)](https://packagist.org/packages/tinywan/jwt) 
-[![Latest Unstable Version](http://poser.pugx.org/tinywan/jwt/v/unstable)](https://packagist.org/packages/tinywan/jwt) 
-[![License](http://poser.pugx.org/tinywan/jwt/license)](https://packagist.org/packages/tinywan/jwt) 
-[![PHP Version Require](http://poser.pugx.org/tinywan/jwt/require/php)](https://packagist.org/packages/tinywan/jwt)
+[![Latest Stable Version](http://poser.pugx.org/chumoe/jwt/v)](https://packagist.org/packages/chumoe/jwt) 
+[![Total Downloads](http://poser.pugx.org/chumoe/jwt/downloads)](https://packagist.org/packages/chumoe/jwt) 
+[![Latest Unstable Version](http://poser.pugx.org/chumoe/jwt/v/unstable)](https://packagist.org/packages/chumoe/jwt) 
+[![License](http://poser.pugx.org/chumoe/jwt/license)](https://packagist.org/packages/chumoe/jwt) 
+[![PHP Version Require](http://poser.pugx.org/chumoe/jwt/require/php)](https://packagist.org/packages/chumoe/jwt)
 
 > Json web token (JWT), 是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准（(RFC 7519).该token被设计为紧凑且安全的，特别适用于分布式站点的单点登录（SSO）场景。
 
@@ -27,7 +27,7 @@ JWT的声明一般被用来在身份提供者和服务提供者间传递被认�
 ## 安装
 
 ```shell
-composer require tinywan/jwt
+composer require chumoe/jwt
 ```
 
 ## 使用
@@ -35,12 +35,12 @@ composer require tinywan/jwt
 ### 生成令牌
 
 ```php
-use Tinywan\Jwt\JwtToken;
+use Chumoe\Jwt\JwtToken;
 
 $user = [
     'uid'  => 2022,
-    'name'  => 'Tinywan',
-    'email' => 'Tinywan@163.com'
+    'name'  => 'chumoe',
+    'email' => 'chumoe@163.com'
 ];
 $token = JwtToken::generateToken($user);
 var_dump(json_encode($token));
@@ -168,13 +168,6 @@ openssl rsa -in RS384.key -pubout -outform PEM -out RS384.key.pub
 ssh-keygen -t rsa -b 4096 -E SHA256 -m PEM -P "" -f RS256.key
 openssl rsa -in RS256.key -pubout -outform PEM -out RS256.key.pub
 ```
-
-## 🚀 视频地址
-
-> 不懂的同学可以了解一下视频，会有详细的说明哦
-
-- 如何使用 JWT 认证插件：https://www.bilibili.com/video/BV1HS4y1F7Jx
-- 如何使用 JWT 认证插件（算法篇）：https://www.bilibili.com/video/BV14L4y1g7sY
 
 ## 安全性
 

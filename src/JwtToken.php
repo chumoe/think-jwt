@@ -7,18 +7,18 @@
 
 declare(strict_types=1);
 
-namespace Tinywan\Jwt;
+namespace Chumoe\Jwt;
 
 use Firebase\JWT\BeforeValidException;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Firebase\JWT\SignatureInvalidException;
-use Tinywan\Jwt\Exception\JwtCacheTokenException;
-use Tinywan\Jwt\Exception\JwtRefreshTokenExpiredException;
-use Tinywan\Jwt\Exception\JwtTokenException;
-use Tinywan\Jwt\Exception\JwtConfigException;
-use Tinywan\Jwt\Exception\JwtTokenExpiredException;
+use Chumoe\Jwt\Exception\JwtCacheTokenException;
+use Chumoe\Jwt\Exception\JwtRefreshTokenExpiredException;
+use Chumoe\Jwt\Exception\JwtTokenException;
+use Chumoe\Jwt\Exception\JwtConfigException;
+use Chumoe\Jwt\Exception\JwtTokenExpiredException;
 use UnexpectedValueException;
 
 class JwtToken

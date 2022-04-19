@@ -16,7 +16,7 @@ return [
         // refresh 令牌是否禁用，默认不禁用 false
         'refresh_disable' => false,
         // 令牌签发者
-        'iss' => 'webman.tinywan.cn',
+        'iss' => 'www.thinkphp.cn',
         // 令牌签发时间
         'iat' => time(),
         // 时钟偏差冗余时间，单位秒。建议这个余地应该不大于几分钟。

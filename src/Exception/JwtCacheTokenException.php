@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Tinywan\Jwt\Exception;
+namespace Chumoe\Jwt\Exception;
 
 class JwtCacheTokenException extends \RuntimeException
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tinywan\Jwt;
+namespace Chumoe\Jwt;
 
 class Install
 {

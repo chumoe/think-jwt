@@ -7,10 +7,10 @@
 
 declare(strict_types=1);
 
-namespace Tinywan\Jwt;
+namespace Chumoe\Jwt;
 
 use support\Redis;
-use Tinywan\Jwt\Exception\JwtCacheTokenException;
+use Chumoe\Jwt\Exception\JwtCacheTokenException;
 
 class RedisHandler
 {
