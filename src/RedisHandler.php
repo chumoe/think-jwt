@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Chumoe\Jwt;
+namespace chumoe\jwt;
 
 use think\facade\Cache;
 use Chumoe\Jwt\Exception\JwtCacheTokenException;
