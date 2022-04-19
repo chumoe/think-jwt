@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Chumoe\Jwt;
 
+use think\facade\Request;
 use Firebase\JWT\BeforeValidException;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
@@ -29,9 +30,36 @@ class JwtToken
     private const REFRESH_TOKEN = 2;
 
     /**
-     * @desc: 获取当前登录ID
-     * @throws JwtTokenException
+     * 获取用户真实IP
+     * @return array|false|mixed|string
+     */
+    public static function getRealIp()
+    {
+        if (isset($_SERVER['HTTP_X_SHOPIFY_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_X_SHOPIFY_CLIENT_IP'];
+        } else {
+            if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+                $ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
+            } else {
+                if (getenv('HTTP_CLIENT_IP') && strcasecmp(getenv('HTTP_CLIENT_IP'), 'unknown')) {
+                    $ip = getenv('HTTP_CLIENT_IP');
+                } elseif (getenv('HTTP_X_FORWARDED_FOR') && strcasecmp(getenv('HTTP_X_FORWARDED_FOR'), 'unknown')) {
+                    $ip = getenv('HTTP_X_FORWARDED_FOR');
+                } elseif (getenv('REMOTE_ADDR') && strcasecmp(getenv('REMOTE_ADDR'), 'unknown')) {
+                    $ip = getenv('REMOTE_ADDR');
+                } elseif (isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] && strcasecmp($_SERVER['REMOTE_ADDR'],
+                        'unknown')) {
+                    $ip = $_SERVER['REMOTE_ADDR'];
+                }
+            }
+        }
+        return $ip;
+    }
+
+    /**
+     * 获取当前登录ID
      * @return mixed
+     * @throws JwtTokenException
      * @author Tinywan(ShaoBo Wan)
      */
     public static function getCurrentId()
@@ -40,8 +68,7 @@ class JwtToken
     }
 
     /**
-     * @desc: 获取指定令牌扩展内容字段的值
-     *
+     * 获取指定令牌扩展内容字段的值
      * @param string $val
      * @return mixed|string
      * @throws JwtTokenException
@@ -62,10 +89,8 @@ class JwtToken
     }
 
     /**
-     * @desc: 刷新令牌
-     *
+     * 刷新令牌
      * @return array|string[]
-     *
      * @throws JwtTokenException
      */
     public static function refreshToken(): array
@@ -82,7 +107,7 @@ class JwtToken
             throw new JwtRefreshTokenExpiredException('刷新令牌会话已过期，请再次登录！');
         } catch (UnexpectedValueException $unexpectedValueException) {
             throw new JwtTokenException('刷新令牌获取的扩展字段不存在');
-        } catch (JwtCacheTokenException | \Exception $exception) {
+        } catch (JwtCacheTokenException|\Exception $exception) {
             throw new JwtTokenException($exception->getMessage());
         }
         $tokenPayload['exp'] = $tokenPayload['exp'] + $config['access_exp'];
@@ -93,22 +118,22 @@ class JwtToken
     }
 
     /**
-     * 生成令牌.
+     * 生成令牌
      * @param array $extend
      * @return array
      * @throws JwtConfigException
      */
     public static function generateToken(array $extend): array
     {
-        if (!isset($extend['id'])) {
-            throw new JwtTokenException('缺少全局唯一字段：id');
+        if (!isset($extend['uid'])) {
+            throw new JwtTokenException('缺少全局唯一字段：uid');
         }
         $config = self::_getConfig();
         $payload = self::generatePayload($config, $extend);
         $secretKey = self::getPrivateKey($config);
         $token = [
-            'token_type' => 'Bearer',
-            'expires_in' => $config['access_exp'],
+            'token_type'   => 'Bearer',
+            'expires_in'   => $config['access_exp'],
             'access_token' => self::makeToken($payload['accessPayload'], $secretKey, $config['algorithms'])
         ];
         if (!isset($config['refresh_disable']) || (isset($config['refresh_disable']) && $config['refresh_disable'] === false)) {
@@ -119,7 +144,7 @@ class JwtToken
     }
 
     /**
-     * @desc: 验证令牌
+     * 验证令牌
      * @param int $tokenType
      * @param string|null $token
      * @return array
@@ -139,7 +164,7 @@ class JwtToken
             throw new JwtTokenExpiredException('身份验证会话已过期，请重新登录！');
         } catch (UnexpectedValueException $unexpectedValueException) {
             throw new JwtTokenException('获取的扩展字段不存在');
-        } catch (JwtCacheTokenException | \Exception $exception) {
+        } catch (JwtCacheTokenException|\Exception $exception) {
             throw new JwtTokenException($exception->getMessage());
         }
     }
@@ -151,7 +176,7 @@ class JwtToken
      */
     private static function getTokenExtend(): array
     {
-        return (array) self::verify()['extend'];
+        return (array)self::verify()['extend'];
     }
 
     /**
@@ -161,17 +186,16 @@ class JwtToken
      */
     public static function getTokenExp(int $tokenType = self::ACCESS_TOKEN): int
     {
-        return (int) self::verify($tokenType)['exp'] - time();
+        return (int)self::verify($tokenType)['exp'] - time();
     }
 
     /**
-     * @desc: 获取Header头部authorization令牌
-     *
+     * 获取Header头部authorization令牌
      * @throws JwtTokenException
      */
     private static function getTokenFromHeaders(): string
     {
-        $authorization = request()->header('authorization');
+        $authorization = Request::header('authorization');
         if (!$authorization || 'undefined' == $authorization) {
             throw new JwtTokenException('请求未携带authorization信息');
         }
@@ -196,7 +220,7 @@ class JwtToken
     }
 
     /**
-     * @desc: 校验令牌
+     * 校验令牌
      * @param string $token
      * @param int $tokenType
      * @return array
@@ -211,16 +235,15 @@ class JwtToken
         $decoded = JWT::decode($token, new Key($publicKey, $config['algorithms']));
         $token = json_decode(json_encode($decoded), true);
         if ($config['is_single_device']) {
-            RedisHandler::verifyToken($config['cache_token_pre'], (string) $token['extend']['id'], request()->getRealIp());
+            CacheHandler::verifyToken($config['cache_token_pre'], (string)$token['extend']['id'], self::getRealIp());
         }
         return $token;
     }
 
     /**
-     * 生成令牌.
-     *
-     * @param array  $payload    载荷信息
-     * @param string $secretKey  签名key
+     * 生成令牌
+     * @param array $payload 载荷信息
+     * @param string $secretKey 签名key
      * @param string $algorithms 算法
      * @return string
      */
@@ -230,8 +253,7 @@ class JwtToken
     }
 
     /**
-     * 获取加密载体.
-     *
+     * 获取加密载体
      * @param array $config 配置文件
      * @param array $extend 扩展加密字段
      * @return array
@@ -239,18 +261,18 @@ class JwtToken
     private static function generatePayload(array $config, array $extend): array
     {
         if ($config['is_single_device']) {
-            RedisHandler::generateToken([
-                'id' => $extend['id'],
-                'ip' => request()->getRealIp(),
-                'extend' => json_encode($extend),
+            CacheHandler::generateToken([
+                'uid'              => $extend['uid'],
+                'ip'              => self::getRealIp(),
+                'extend'          => json_encode($extend),
                 'cache_token_ttl' => $config['cache_token_ttl'],
                 'cache_token_pre' => $config['cache_token_pre']
             ]);
         }
         $basePayload = [
-            'iss' => $config['iss'],
-            'iat' => time(),
-            'exp' => time() + $config['access_exp'],
+            'iss'    => $config['iss'],
+            'iat'    => time(),
+            'exp'    => time() + $config['access_exp'],
             'extend' => $extend
         ];
         $resPayLoad['accessPayload'] = $basePayload;
@@ -315,7 +337,7 @@ class JwtToken
      */
     private static function _getConfig(): array
     {
-        $config = config('plugin.tinywan.jwt.app.jwt');
+        $config = config('jwt');
         if (empty($config)) {
             throw new JwtConfigException('jwt配置文件不存在');
         }
