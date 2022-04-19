@@ -1,4 +1,4 @@
-# JSON Web Token (JWT) for webman plugin
+# JSON Web Token (JWT) for ThinkPHP6 plugin
 
 [![Latest Stable Version](http://poser.pugx.org/chumoe/jwt/v)](https://packagist.org/packages/chumoe/jwt) 
 [![Total Downloads](http://poser.pugx.org/chumoe/jwt/downloads)](https://packagist.org/packages/chumoe/jwt) 
