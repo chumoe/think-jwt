@@ -4,7 +4,7 @@
   "type": "think-extend",
   "license": "MIT",
   "require": {
-    "php": ">=7.1.0",
+    "php": ">=7.2.5",
     "ext-json": "*",
     "firebase/php-jwt": "^6.1"
   },
