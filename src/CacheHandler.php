@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace chumoe\jwt;
 
 use think\facade\Cache;
-use Chumoe\Jwt\Exception\JwtCacheTokenException;
+use chumoe\jwt\exception\JwtCacheTokenException;
 
 class CacheHandler
 {

@@ -10,11 +10,11 @@ use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Firebase\JWT\SignatureInvalidException;
-use Chumoe\Jwt\Exception\JwtCacheTokenException;
-use Chumoe\Jwt\Exception\JwtRefreshTokenExpiredException;
-use Chumoe\Jwt\Exception\JwtTokenException;
-use Chumoe\Jwt\Exception\JwtConfigException;
-use Chumoe\Jwt\Exception\JwtTokenExpiredException;
+use chumoe\jwt\exception\JwtCacheTokenException;
+use chumoe\jwt\exception\JwtRefreshTokenExpiredException;
+use chumoe\jwt\exception\JwtTokenException;
+use chumoe\jwt\exception\JwtConfigException;
+use chumoe\jwt\exception\JwtTokenExpiredException;
 use UnexpectedValueException;
 
 class JwtToken
