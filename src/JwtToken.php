@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace chumoe\jwt;
 
-use think\facade\Request;
+use chumoe\jwt\exception\JwtCacheTokenException;
+use chumoe\jwt\exception\JwtConfigException;
+use chumoe\jwt\exception\JwtRefreshTokenExpiredException;
+use chumoe\jwt\exception\JwtTokenException;
+use chumoe\jwt\exception\JwtTokenExpiredException;
 use Firebase\JWT\BeforeValidException;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Firebase\JWT\SignatureInvalidException;
-use Chumoe\Jwt\Exception\JwtCacheTokenException;
-use Chumoe\Jwt\Exception\JwtRefreshTokenExpiredException;
-use Chumoe\Jwt\Exception\JwtTokenException;
-use Chumoe\Jwt\Exception\JwtConfigException;
-use Chumoe\Jwt\Exception\JwtTokenExpiredException;
+use think\facade\Request;
 use UnexpectedValueException;
 
 class JwtToken

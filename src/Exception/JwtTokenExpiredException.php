@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Chumoe\Jwt\Exception;
+namespace chumoe\jwt\exception;
 
 
 class JwtTokenExpiredException extends \RuntimeException
