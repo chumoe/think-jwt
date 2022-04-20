@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace chumoe\jwt;
 
-use chumoe\jwt\exception\JwtCacheTokenException;
-use chumoe\jwt\exception\JwtConfigException;
-use chumoe\jwt\exception\JwtRefreshTokenExpiredException;
-use chumoe\jwt\exception\JwtTokenException;
-use chumoe\jwt\exception\JwtTokenExpiredException;
+use chumoe\jwt\excep\JwtCacheTokenException;
+use chumoe\jwt\excep\JwtConfigException;
+use chumoe\jwt\excep\JwtRefreshTokenExpiredException;
+use chumoe\jwt\excep\JwtTokenException;
+use chumoe\jwt\excep\JwtTokenExpiredException;
 use Firebase\JWT\BeforeValidException;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
