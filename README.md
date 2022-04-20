@@ -35,7 +35,7 @@ composer require chumoe/jwt
 ### 生成令牌
 
 ```php
-use Chumoe\Jwt\JwtToken;
+use chumoe\jwt\JwtToken;
 
 $user = [
     'uid'  => 2022,
