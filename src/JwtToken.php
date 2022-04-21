@@ -16,6 +16,7 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Firebase\JWT\SignatureInvalidException;
 use think\facade\Request;
+use think\facade\Config;
 use UnexpectedValueException;
 
 class JwtToken
@@ -333,7 +334,7 @@ class JwtToken
      */
     private static function _getConfig(): array
     {
-        $config = config('jwt.jwt');
+        $config = Config::get('jwt.jwt');
         if (empty($config)) {
             throw new JwtConfigException('jwt配置文件不存在');
         }
