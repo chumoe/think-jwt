@@ -31,10 +31,11 @@ class JwtToken
 
     /**
      * 获取用户真实IP
-     * @return array|false|mixed|string
+     * @return array|false|mixed|string|null
      */
     public static function getRealIp()
     {
+        $ip = null;
         if (isset($_SERVER['HTTP_X_SHOPIFY_CLIENT_IP'])) {
             $ip = $_SERVER['HTTP_X_SHOPIFY_CLIENT_IP'];
         } else {
@@ -57,21 +58,18 @@ class JwtToken
     }
 
     /**
-     * 获取当前登录ID
-     * @return mixed
-     * @throws JwtTokenException
-     * @author Tinywan(ShaoBo Wan)
+     * 获取当前登录UID
+     * @return int|mixed|string
      */
     public static function getCurrentId()
     {
-        return self::getExtendVal('id') ?? 0;
+        return self::getExtendVal('uid') ?? 0;
     }
 
     /**
      * 获取指定令牌扩展内容字段的值
-     * @param string $val
+     * @param string $val 要获取的键名
      * @return mixed|string
-     * @throws JwtTokenException
      */
     public static function getExtendVal(string $val)
     {
@@ -79,9 +77,8 @@ class JwtToken
     }
 
     /**
-     * @desc 获取指定令牌扩展内容
+     * 获取指定令牌扩展内容
      * @return array
-     * @throws JwtTokenException
      */
     public static function getExtend(): array
     {
@@ -90,8 +87,7 @@ class JwtToken
 
     /**
      * 刷新令牌
-     * @return array|string[]
-     * @throws JwtTokenException
+     * @return string[]
      */
     public static function refreshToken(): array
     {
@@ -119,12 +115,13 @@ class JwtToken
 
     /**
      * 生成令牌
-     * @param array $extend
-     * @param int|null $access_exp
-     * @param bool|null $refresh_disable
+     * @param array $extend 要生成令牌的数组
+     * @param int|null $access_exp access令牌过期时间，默认 null 为配置文件 access_exp 配置项
+     * @param bool|null $refresh_disable refresh令牌是否禁用，默认 null 为配置文件 refresh_disable 配置项
+     * @param int|null $refresh_exp refresh令牌过期时间，默认 null 为配置文件 refresh_exp 配置项
      * @return array
      */
-    public static function generateToken(array $extend, int $access_exp = null, bool $refresh_disable = null): array
+    public static function generateToken(array $extend, int $access_exp = null, bool $refresh_disable = null, int $refresh_exp = null): array
     {
         if (!isset($extend['uid'])) {
             throw new JwtTokenException('缺少全局唯一字段：uid');
@@ -132,6 +129,7 @@ class JwtToken
         $config = self::_getConfig();
         $config['access_exp'] = $access_exp ?? $config['access_exp'];
         $config['refresh_disable'] = $refresh_disable ?? $config['refresh_disable'];
+        $config['refresh_exp'] = $refresh_exp ?? $config['refresh_exp'];
         $payload = self::generatePayload($config, $extend);
         $secretKey = self::getPrivateKey($config);
         $token = [
@@ -148,11 +146,9 @@ class JwtToken
 
     /**
      * 验证令牌
-     * @param int $tokenType
-     * @param string|null $token
+     * @param int $tokenType 令牌类型，默认为 access令牌
+     * @param string|null $token 要验证的token，默认为获取头部的 authorization
      * @return array
-     * @throws JwtTokenException
-     * @author Tinywan(ShaoBo Wan)
      */
     public static function verify(int $tokenType = self::ACCESS_TOKEN, string $token = null): array
     {
@@ -173,9 +169,8 @@ class JwtToken
     }
 
     /**
-     * 获取扩展字段.
+     * 获取扩展字段
      * @return array
-     * @throws JwtTokenException
      */
     private static function getTokenExtend(): array
     {
@@ -183,8 +178,8 @@ class JwtToken
     }
 
     /**
-     * 获令牌有效期剩余时长.
-     * @param int $tokenType
+     * 获令牌有效期剩余时长
+     * @param int $tokenType 令牌类型，默认为 access令牌
      * @return int
      */
     public static function getTokenExp(int $tokenType = self::ACCESS_TOKEN): int
@@ -194,7 +189,7 @@ class JwtToken
 
     /**
      * 获取Header头部authorization令牌
-     * @throws JwtTokenException
+     * @return string
      */
     private static function getTokenFromHeaders(): string
     {
@@ -224,10 +219,9 @@ class JwtToken
 
     /**
      * 校验令牌
-     * @param string $token
-     * @param int $tokenType
+     * @param string $token 要验证的token
+     * @param int $tokenType 令牌类型
      * @return array
-     * @author Tinywan(ShaoBo Wan)
      */
     private static function verifyToken(string $token, int $tokenType): array
     {
@@ -245,8 +239,8 @@ class JwtToken
 
     /**
      * 生成令牌
-     * @param array $payload 载荷信息
-     * @param string $secretKey 签名key
+     * @param array $payload 要生成令牌的数组
+     * @param string $secretKey 密钥
      * @param string $algorithms 算法
      * @return string
      */
@@ -290,7 +284,6 @@ class JwtToken
      * @param string $algorithm 算法
      * @param int $tokenType 类型
      * @return string
-     * @throws JwtConfigException
      */
     private static function getPublicKey(string $algorithm, int $tokenType = self::ACCESS_TOKEN): string
     {
@@ -336,7 +329,6 @@ class JwtToken
     /**
      * 获取配置文件
      * @return array
-     * @throws JwtConfigException
      */
     private static function _getConfig(): array
     {
