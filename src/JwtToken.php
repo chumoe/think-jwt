@@ -120,15 +120,18 @@ class JwtToken
     /**
      * 生成令牌
      * @param array $extend
+     * @param int|null $access_exp
+     * @param bool|null $refresh_disable
      * @return array
-     * @throws JwtConfigException
      */
-    public static function generateToken(array $extend): array
+    public static function generateToken(array $extend, int $access_exp = null, bool $refresh_disable = null): array
     {
         if (!isset($extend['uid'])) {
             throw new JwtTokenException('缺少全局唯一字段：uid');
         }
         $config = self::_getConfig();
+        $config['access_exp'] = $access_exp ?? $config['access_exp'];
+        $config['refresh_disable'] = $refresh_disable ?? $config['refresh_disable'];
         $payload = self::generatePayload($config, $extend);
         $secretKey = self::getPrivateKey($config);
         $token = [
